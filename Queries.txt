@@ -1,0 +1,98 @@
+/* Query 1 */
+
+SELECT Title album_title,sum(total) total_invoices
+FROM Album
+JOIN Track
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+GROUP By 1
+ORDER By 2 DESC
+LIMIT 5
+
+/* Query 2 */
+
+SELECT Track.Name , sum(Invoice.total)
+FROM Album
+JOIN Track
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+
+WHERE Album.AlbumId =
+(SELECT Album.AlbumId 
+FROM Album
+JOIN Track
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+GROUP By Album.Title
+ORDER By sum(total) DESC
+LIMIT 1)
+GROUP By 1
+ORDER By 2 DESC
+limit 10
+
+/* Query 3 */
+
+SELECT Genre.Name , sum(Invoice.total)
+From Genre
+JOIN Track
+ON Track.GenreId = Genre.GenreId
+JOIN Album
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+
+WHERE Album.AlbumId = (SELECT Album.AlbumId 
+FROM Album
+JOIN Track
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+GROUP By Album.Title
+ORDER By sum(total) DESC
+LIMIT 1)
+
+GROUP By 1
+ORDER By 2 DESC
+limit 10
+
+
+/* Query 4 */
+
+SELECT  Customer.Country, sum(Invoice.total)
+From Customer
+JOIN Invoice
+On Invoice.CustomerId = Customer.CustomerId
+JOIN InvoiceLine
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+Join Track
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Album
+ON Track.AlbumId = Album.AlbumId
+
+WHERE Album.AlbumId = (SELECT Album.AlbumId 
+FROM Album
+JOIN Track
+ON Track.AlbumId = Album.AlbumId
+JOIN InvoiceLine
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Invoice
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+GROUP By Album.Title
+ORDER By sum(total) DESC
+LIMIT 1)
+
+GROUP By 1
+ORDER By 2 DESC
